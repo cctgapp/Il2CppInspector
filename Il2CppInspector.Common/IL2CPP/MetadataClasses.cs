@@ -23,7 +23,6 @@ namespace Il2CppInspector
     // Unity 2019.3.7f1 -> v24.3
     // Unity 2019.4.15f1 -> v24.4
     // Unity 2019.4.21f1 -> v24.5
-    // Unity 2019.4.31f1 -> v24.4
     // Unity 2020.1.0f1 -> v24.3
     // Unity 2020.1.11f1 -> v24.4
     // Unity 2020.2.0f1 -> v27
