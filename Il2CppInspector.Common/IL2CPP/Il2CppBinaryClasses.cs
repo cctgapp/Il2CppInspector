@@ -37,7 +37,7 @@ namespace Il2CppInspector
 
         public ulong genericMethodPointersCount;
         public ulong genericMethodPointers;
-        [Version(Min = 24.5, Max = 24.5)]
+        [Version(Min = 24.4, Max = 24.5)]
         [Version(Min = 27.1)]
         public ulong genericAdjustorThunks;
 
@@ -86,10 +86,10 @@ namespace Il2CppInspector
         public ulong moduleName;
         public ulong methodPointerCount;
         public ulong methodPointers;
-        [Version(Min = 24.5, Max = 24.5)]
+        [Version(Min = 24.4, Max = 24.5)]
         [Version(Min = 27.1)] 
         public long adjustorThunkCount;
-        [Version(Min = 24.5, Max = 24.5)]
+        [Version(Min = 24.4, Max = 24.5)]
         [Version(Min = 27.1)]
         public ulong adjustorThunks; //Pointer
         public ulong invokerIndices;
@@ -260,7 +260,7 @@ namespace Il2CppInspector
     {
         public int methodIndex;
         public int invokerIndex;
-        [Version(Min = 24.5, Max = 24.5)]
+        [Version(Min = 24.4, Max = 24.5)]
         [Version(Min = 27.1)] 
         public int adjustorThunk;
     }

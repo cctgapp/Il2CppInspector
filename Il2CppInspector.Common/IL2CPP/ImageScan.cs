@@ -205,10 +205,10 @@ namespace Il2CppInspector
                     // Even field indices are counts, odd field indices are pointers
                     bool ok = true;
                     for (var i = 0; i < mrWords.Length && ok; i++) {
-                        ok = i % 2 == 0 ? mrWords[i] < 0x30000 : Image.TryMapVATR((ulong) mrWords[i], out _);
+                        ok = i % 2 == 0 ? mrWords[i] < 0x3000000 : Image.TryMapVATR((ulong) mrWords[i], out _);
                     }
                     if (ok)
-                        metadataRegistration = va;
+                        metadataRegistration = va + 0x10;
                 }
             }
             if (metadataRegistration == 0)
