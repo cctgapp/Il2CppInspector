@@ -244,14 +244,15 @@ namespace Il2CppInspector
             Binary = binary;
             Metadata = metadata;
 
+Console.WriteLine("Il2CppInspector" + 0);
             // Get all field default values
             foreach (var fdv in Metadata.FieldDefaultValues)
                 FieldDefaultValue.Add(fdv.fieldIndex, ((ulong,object)) getDefaultValue(fdv.typeIndex, fdv.dataIndex));
-
+Console.WriteLine("Il2CppInspector" + 1);
             // Get all parameter default values
             foreach (var pdv in Metadata.ParameterDefaultValues)
                 ParameterDefaultValue.Add(pdv.parameterIndex, ((ulong,object)) getDefaultValue(pdv.typeIndex, pdv.dataIndex));
-
+Console.WriteLine("Il2CppInspector" + 2);
             // Get all field offsets
             if (Binary.FieldOffsets != null) {
                 FieldOffsets = Binary.FieldOffsets.Select(x => (long) x).ToList();
@@ -281,12 +282,12 @@ namespace Il2CppInspector
 
                 FieldOffsets = offsets.OrderBy(x => x.Key).Select(x => x.Value).ToList();
             }
-
+Console.WriteLine("Il2CppInspector" + 3);
             // Build list of custom attribute generators
             if (Version < 27)
                 CustomAttributeGenerators = Binary.CustomAttributeGenerators;
 
-            else {
+            else if (Version < 29){
                 var cagCount = Images.Sum(i => i.customAttributeCount);
                 CustomAttributeGenerators = new ulong[cagCount];
 
@@ -297,9 +298,11 @@ namespace Il2CppInspector
                     cags.CopyTo(CustomAttributeGenerators, image.customAttributeStart);
                 }
             }
-
+Console.WriteLine("Il2CppInspector" + 4);
             // Decode addresses for Thumb etc. without altering the Il2CppBinary structure data
-            CustomAttributeGenerators = CustomAttributeGenerators.Select(a => getDecodedAddress(a)).ToArray();
+            if (Version < 29){
+                CustomAttributeGenerators = CustomAttributeGenerators.Select(a => getDecodedAddress(a)).ToArray();
+            }
             MethodInvokePointers = Binary.MethodInvokePointers.Select(a => getDecodedAddress(a)).ToArray();
             GenericMethodPointers = Binary.GenericMethodPointers.ToDictionary(a => a.Key, a => getDecodedAddress(a.Value));
 
@@ -309,7 +312,9 @@ namespace Il2CppInspector
             Binary.GlobalMethodPointers.Select(a => getDecodedAddress(a)).ToList() :
             Binary.ModuleMethodPointers.SelectMany(module => module.Value).Select(a => getDecodedAddress(a)).ToList();
 
-            sortedFunctionPointers.AddRange(CustomAttributeGenerators);
+            if (Version < 29){
+                sortedFunctionPointers.AddRange(CustomAttributeGenerators);
+            }
             sortedFunctionPointers.AddRange(MethodInvokePointers);
             sortedFunctionPointers.AddRange(GenericMethodPointers.Values);
             sortedFunctionPointers.Sort();
@@ -336,7 +341,7 @@ namespace Il2CppInspector
                         AttributeIndicesByToken.Add(image.customAttributeStart, attsByToken);
                 }
             }
-
+Console.WriteLine("Il2CppInspector" + 5);
             // Merge all metadata usage references into a single distinct list
             MetadataUsages = buildMetadataUsages();
 
