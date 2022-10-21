@@ -48,6 +48,9 @@ namespace Il2CppInspector.Reflection
             if (pkg.Version < 21)
                 yield break;
 
+            if(pkg.Version >= 29)
+                 yield break; //TODO v29 attributes
+                 
             var range = pkg.AttributeTypeRanges[customAttributeIndex];
             for (var i = range.start; i < range.start + range.count; i++) {
                 var typeIndex = pkg.AttributeTypeIndices[i];

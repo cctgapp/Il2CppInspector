@@ -83,7 +83,7 @@ namespace Il2CppInspector
 
             object value = null;
             Metadata.Position = pValue;
-            switch (typeRef.type) {
+             switch (typeRef.type) {
                 case Il2CppTypeEnum.IL2CPP_TYPE_BOOLEAN:
                     value = Metadata.ReadBoolean();
                     break;
@@ -102,10 +102,18 @@ namespace Il2CppInspector
                     value = Metadata.ReadInt16();
                     break;
                 case Il2CppTypeEnum.IL2CPP_TYPE_U4:
-                    value = Metadata.ReadUInt32();
+                    //V29 uses the new compressed uint format
+                     if (Metadata.Version >= 29)
+                        value = Metadata.ReadUnityCompressedUInt(out _);
+                     else
+                        value = Metadata.ReadUInt32();
                     break;
                 case Il2CppTypeEnum.IL2CPP_TYPE_I4:
-                    value = Metadata.ReadInt32();
+                    //V29 uses the new compressed int format
+                     if (Metadata.Version >= 29)
+                        value = Metadata.ReadUnityCompressedInt(out _);
+                     else
+                        value = Metadata.ReadInt32();
                     break;
                 case Il2CppTypeEnum.IL2CPP_TYPE_U8:
                     value = Metadata.ReadUInt64();
@@ -120,7 +128,12 @@ namespace Il2CppInspector
                     value = Metadata.ReadDouble();
                     break;
                 case Il2CppTypeEnum.IL2CPP_TYPE_STRING:
-                    var uiLen = Metadata.ReadInt32();
+                    int uiLen;
+                    if (Metadata.Version >= 29)
+                        //As of v29 string length is compressed
+                        uiLen = Metadata.ReadUnityCompressedInt(out _);
+                    else                    
+                        uiLen = Metadata.ReadInt32();
                     value = Encoding.UTF8.GetString(Metadata.ReadBytes(uiLen));
                     break;
             }
@@ -310,7 +323,7 @@ namespace Il2CppInspector
             FunctionAddresses.Add(sortedFunctionPointers[^1], sortedFunctionPointers[^1]);
 
             // Organize custom attribute indices
-            if (Version >= 24.1) {
+            if (Version >= 24.1 && Version < 29) {
                 AttributeIndicesByToken = new Dictionary<int, Dictionary<uint, int>>();
                 foreach (var image in Images) {
                     var attsByToken = new Dictionary<uint, int>();
