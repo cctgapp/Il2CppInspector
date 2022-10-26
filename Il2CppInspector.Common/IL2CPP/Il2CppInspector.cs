@@ -245,6 +245,37 @@ namespace Il2CppInspector
             Metadata = metadata;
 
 Console.WriteLine("Il2CppInspector" + 0);
+Console.WriteLine($"signature: 0x{Metadata.Header.signature:X8}, version: {Metadata.Header.version}");
+Console.WriteLine($"stringLiteralOffset: 0x{Metadata.Header.stringLiteralOffset:X8}, stringLiteralCount: {Metadata.Header.stringLiteralCount}");
+Console.WriteLine($"stringLiteralDataOffset: 0x{Metadata.Header.stringLiteralDataOffset:X8}, stringLiteralDataCount: {Metadata.Header.stringLiteralDataCount}");
+Console.WriteLine($"stringOffset: 0x{Metadata.Header.stringOffset:X8}, stringCount: {Metadata.Header.stringCount}");
+Console.WriteLine($"eventsOffset: 0x{Metadata.Header.eventsOffset:X8}, eventsCount: {Metadata.Header.eventsCount}");
+Console.WriteLine($"propertiesOffset: 0x{Metadata.Header.propertiesOffset:X8}, propertiesCount: {Metadata.Header.propertiesCount}");
+Console.WriteLine($"methodsOffset: 0x{Metadata.Header.methodsOffset:X8}, methodsCount: {Metadata.Header.methodsCount}");
+Console.WriteLine($"parameterDefaultValuesOffset: 0x{Metadata.Header.parameterDefaultValuesOffset:X8}, parameterDefaultValuesCount: {Metadata.Header.parameterDefaultValuesCount}");
+Console.WriteLine($"fieldDefaultValuesOffset: 0x{Metadata.Header.fieldDefaultValuesOffset:X8}, fieldDefaultValuesCount: {Metadata.Header.fieldDefaultValuesCount}");
+Console.WriteLine($"fieldAndParameterDefaultValueDataOffset: 0x{Metadata.Header.fieldAndParameterDefaultValueDataOffset:X8}, fieldAndParameterDefaultValueDataCount: {Metadata.Header.fieldAndParameterDefaultValueDataCount}");
+Console.WriteLine($"fieldMarshaledSizesOffset: 0x{Metadata.Header.fieldMarshaledSizesOffset:X8}, fieldMarshaledSizesCount: {Metadata.Header.fieldMarshaledSizesCount}");
+Console.WriteLine($"parametersOffset: 0x{Metadata.Header.parametersOffset:X8}, parametersCount: {Metadata.Header.parametersCount}");
+Console.WriteLine($"fieldsOffset: 0x{Metadata.Header.fieldsOffset:X8}, fieldsCount: {Metadata.Header.fieldsCount}");
+Console.WriteLine($"genericParametersOffset: 0x{Metadata.Header.genericParametersOffset:X8}, genericParametersCount: {Metadata.Header.genericParametersCount}");
+Console.WriteLine($"genericParameterConstraintsOffset: 0x{Metadata.Header.genericParameterConstraintsOffset:X8}, genericParameterConstraintsCount: {Metadata.Header.genericParameterConstraintsCount}");
+Console.WriteLine($"genericContainersOffset: 0x{Metadata.Header.genericContainersOffset:X8}, genericContainersCount: {Metadata.Header.genericContainersCount}");
+Console.WriteLine($"nestedTypesOffset: 0x{Metadata.Header.nestedTypesOffset:X8}, nestedTypesCount: {Metadata.Header.nestedTypesCount}");
+Console.WriteLine($"interfacesOffset: 0x{Metadata.Header.interfacesOffset:X8}, interfacesCount: {Metadata.Header.interfacesCount}");
+Console.WriteLine($"vtableMethodsOffset: 0x{Metadata.Header.vtableMethodsOffset:X8}, vtableMethodsCount: {Metadata.Header.vtableMethodsCount}");
+Console.WriteLine($"interfaceOffsetsOffset: 0x{Metadata.Header.interfaceOffsetsOffset:X8}, interfaceOffsetsCount: {Metadata.Header.interfaceOffsetsCount}");
+Console.WriteLine($"typeDefinitionsOffset: 0x{Metadata.Header.typeDefinitionsOffset:X8}, typeDefinitionsCount: {Metadata.Header.typeDefinitionsCount}");
+Console.WriteLine($"rgctxEntriesOffset: 0x{Metadata.Header.rgctxEntriesOffset:X8}, rgctxEntriesCount: {Metadata.Header.rgctxEntriesCount}");
+Console.WriteLine($"imagesOffset: 0x{Metadata.Header.imagesOffset:X8}, imagesCount: {Metadata.Header.imagesCount}");
+Console.WriteLine($"assembliesOffset: 0x{Metadata.Header.assembliesOffset:X8}, assembliesCount: {Metadata.Header.assembliesCount}");
+Console.WriteLine($"metadataUsageListsOffset: 0x{Metadata.Header.metadataUsageListsOffset:X8}, metadataUsageListsCount: {Metadata.Header.metadataUsageListsCount}");
+Console.WriteLine($"metadataUsagePairsOffset: 0x{Metadata.Header.metadataUsagePairsOffset:X8}, metadataUsagePairsCount: {Metadata.Header.metadataUsagePairsCount}");
+Console.WriteLine($"fieldRefsOffset: 0x{Metadata.Header.fieldRefsOffset:X8}, fieldRefsCount: {Metadata.Header.fieldRefsCount}");
+Console.WriteLine($"referencedAssembliesOffset: 0x{Metadata.Header.referencedAssembliesOffset:X8}, referencedAssembliesCount: {Metadata.Header.referencedAssembliesCount}");
+Console.WriteLine($"attributesInfoOffset: 0x{Metadata.Header.attributesInfoOffset:X8}, attributesInfoCount: {Metadata.Header.attributesInfoCount}");
+Console.WriteLine($"attributeTypesOffset: 0x{Metadata.Header.attributeTypesOffset:X8}, attributeTypesCount: {Metadata.Header.attributeTypesCount}");
+
             // Get all field default values
             foreach (var fdv in Metadata.FieldDefaultValues)
                 FieldDefaultValue.Add(fdv.fieldIndex, ((ulong,object)) getDefaultValue(fdv.typeIndex, fdv.dataIndex));
@@ -301,7 +332,7 @@ Console.WriteLine("Il2CppInspector" + 3);
 Console.WriteLine("Il2CppInspector" + 4);
             // Decode addresses for Thumb etc. without altering the Il2CppBinary structure data
             if (Version < 29){
-                CustomAttributeGenerators = CustomAttributeGenerators.Select(a => getDecodedAddress(a)).ToArray();
+                //CustomAttributeGenerators = CustomAttributeGenerators.Select(a => getDecodedAddress(a)).ToArray();
             }
             MethodInvokePointers = Binary.MethodInvokePointers.Select(a => getDecodedAddress(a)).ToArray();
             GenericMethodPointers = Binary.GenericMethodPointers.ToDictionary(a => a.Key, a => getDecodedAddress(a.Value));

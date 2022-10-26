@@ -205,7 +205,8 @@ namespace Il2CppInspector
             }
 
             // Post-processing hook
-            IsModified |= PluginHooks.PostProcessMetadata(this).IsStreamModified;
+            // When met this error(The plugin Metadata strings XOR decryptor encountered an error while executing PostProcessMetadata: Unable to read beyond the end of the stream.), Strings will be cleared.
+            //IsModified |= PluginHooks.PostProcessMetadata(this).IsStreamModified;
         }
 
         // Save metadata to file, overwriting if necessary

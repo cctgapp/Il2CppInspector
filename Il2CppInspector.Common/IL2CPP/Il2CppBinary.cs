@@ -225,6 +225,9 @@ namespace Il2CppInspector
                 if (code != 0) {
                     RegistrationFunctionPointer = loc + Image.GlobalOffset;
                     Console.WriteLine("Required structures acquired from code heuristics. Initialization function: 0x{0:X16}", RegistrationFunctionPointer);
+                    // Find wrong for CookieKindomRun
+                    // But need enable for RandomDice
+                    // Fixed in ConsiderCode()
                     return (code, metadata);
                 }
             }

@@ -69,6 +69,10 @@ namespace Il2CppInspector
         }
 
         private bool isB(uint inst) => inst.Bits(26, 6) == 0b_000101;
+        // MOV W3, #0
+        private bool isMW3(uint inst) => inst == 0x52800003;
+        // MOV X2, #0
+        private bool isMX2(uint inst) => inst == 0xD2800002;
 
         private Dictionary<uint, ulong> sweepForAddressLoads(List<uint> func, ulong baseAddress, IFileFormatStream image) {
             // List of registers and addresses loaded into them
@@ -147,9 +151,46 @@ namespace Il2CppInspector
             var func = getFunctionAtFileOffset(image, loc, 7);
 
             // Don't accept functions longer than 7 instructions (in this case, the last instruction won't be a B)
+            //Console.Write($"ConsiderCode: {func[0]:X8}, {func[1]:X8}, {func[2]:X8}, {func[3]:X8}, {func[4]:X8}, {func[5]:X8}, {func[6]:X8}");
             if (!isB(func[^1]))
                 return (0, 0);
+            
+            if (image.Version >= 23 && func.Count < 7)
+            {
+                return (0, 0);
+            }
 
+            if (image.Version >= 23)
+            {
+                /* ADRP X0, unk
+                 * ADD X0, X0, unk
+                 * ADR X1, sub
+                 * NOP
+                 * MOV X2, #0
+                 * MOV W3, #0
+                 * B sub
+                 */
+
+                if (!isMW3 (func[5]) || !isMX2 (func[4]))
+                {
+                    return (0, 0);
+                }
+            }
+            else if (image.Version >= 24)
+            {
+                /* ADRP X0, unk
+                 * ADD X0, X0, unk
+                 * ADR X1, sub
+                 * NOP
+                 * MOV W3, #0
+                 * MOV X2, #0
+                 * B sub
+                 */
+                if (!isMW3 (func[4]) || !isMX2 (func[5]))
+                {
+                    return (0, 0);
+                }
+            }
             // Get a list of registers and values in them at the end of the function
             var regs = sweepForAddressLoads(func, image.GlobalOffset + loc, image);
 
