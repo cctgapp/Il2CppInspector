@@ -161,7 +161,21 @@ namespace Il2CppInspector
                 if (Version == 24.2 && assemblyCount < Images.Length)
                     Version = 24.4;
 
+            // for MergeDuck2/Cloudia
+            var v241Plus = false;
+            if (Version == 24.1 && Header.assembliesCount / 64 == Images.Length)
+            {
+                v241Plus = true;
+            }
+            if (v241Plus)
+            {
+                Version = 24.4;
+            }
                 Assemblies = ReadArray<Il2CppAssemblyDefinition>(Header.assembliesOffset, Images.Length);
+            if (v241Plus)
+            {
+                Version = 24.1;
+            }
                 ParameterDefaultValues = ReadArray<Il2CppParameterDefaultValue>(Header.parameterDefaultValuesOffset, Header.parameterDefaultValuesCount / Sizeof(typeof(Il2CppParameterDefaultValue)));
             }
             if (Version >= 19 && Version < 27) {
