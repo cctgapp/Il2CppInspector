@@ -122,13 +122,17 @@ namespace Il2CppInspector
                 }
 
                 if (!codeRegVas.Any())
+                {
+                    Console.WriteLine("codeRegVas.Any fail.");
                     return (0, 0);
+                }
 
                 if (codeRegVas.Count() > 1)
                     throw new InvalidOperationException("More than one valid pointer chain found during data heuristics");
 
                 // pCodeGenModules is the last field in CodeRegistration so we subtract the size of one pointer from the struct size
                 codeRegistration = codeRegVas.First() - ((ulong) metadata.Sizeof(typeof(Il2CppCodeRegistration), Image.Version, Image.Bits / 8) - ptrSize);
+                Console.WriteLine($"Found codeRegistration1 = 0x{codeRegistration:X32}");
 
                 // In v24.3, windowsRuntimeFactoryTable collides with codeGenModules. So far no samples have had windowsRuntimeFactoryCount > 0;
                 // if this changes we'll have to get smarter about disambiguating these two.
@@ -137,6 +141,7 @@ namespace Il2CppInspector
                 if (Image.Version == 24.2 && cr.interopDataCount == 0) {
                     Image.Version = 24.3;
                     codeRegistration -= ptrSize * 2; // two extra words for WindowsRuntimeFactory
+                    Console.WriteLine($"Found codeRegistration = 0x{codeRegistration:X32}");
                 }
 
                 if (Image.Version == 27 && cr.reversePInvokeWrapperCount > 0x30000)
@@ -145,6 +150,7 @@ namespace Il2CppInspector
                     // We need to bump version to 27.1 and back up one more pointer.
                     Image.Version = 27.1;
                     codeRegistration -= ptrSize;
+                    Console.WriteLine($"Found codeRegistration = 0x{codeRegistration:X32}");
                 }
             }
 
@@ -165,6 +171,7 @@ namespace Il2CppInspector
 
                     if (cr.customAttributeCount == metadata.AttributeTypeRanges.Length)
                         codeRegistration = va;
+                        Console.WriteLine($"Found codeRegistration = 0x{codeRegistration:X32}");
                 }
 
                 if (codeRegistration == 0)
@@ -200,15 +207,22 @@ namespace Il2CppInspector
 
                 var mrFieldCount = mrSize / (ulong) (Image.Bits / 8);
                 foreach (var va in vas) {
+                    Console.WriteLine($"Check va = 0x{va:X32}");
                     var mrWords = Image.ReadMappedWordArray(va, (int) mrFieldCount);
 
                     // Even field indices are counts, odd field indices are pointers
                     bool ok = true;
+                    Console.WriteLine($"mrWords.Length = {mrWords.Length}");
                     for (var i = 0; i < mrWords.Length && ok; i++) {
-                        ok = i % 2 == 0 ? mrWords[i] < 0x3000000 : Image.TryMapVATR((ulong) mrWords[i], out _);
+                        Console.WriteLine($"{i}: 0x{mrWords[i]:X16}, {Image.TryMapVATR((ulong) mrWords[i], out _)}");
+                        //ok = i % 2 == 0 ? mrWords[i] < 0x3000000 : Image.TryMapVATR((ulong) mrWords[i], out _);
+                        // The game 勝利女神：妮姬, V29, 1st count is 0x00000000041F6E0C which exceeds 0x3000000
+                        ok = i % 2 == 0 ? mrWords[i] < 0x5000000 : Image.TryMapVATR((ulong) mrWords[i], out _);
                     }
-                    if (ok)
+                    if (ok){
                         metadataRegistration = va + 0x10;
+                        Console.WriteLine($"Found metadataRegistration = 0x{metadataRegistration:X32}");
+                    }
                 }
             }
             if (metadataRegistration == 0)
